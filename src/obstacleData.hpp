@@ -61,6 +61,9 @@ class ObstacleData {
 	size_t size() {
 		return Obstacles.size();
 	}
+	std::vector<Point> get_Object(int i) {
+		return Obstacles[i];
+	}
 };
 
 extern ObstacleData obstacleData;
