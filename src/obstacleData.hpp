@@ -16,7 +16,7 @@ class ObstacleData {
 	std::vector<std::vector<Point>> Obstacles;
 
   public:
-	ObstacleData(std::string fileName = "./src/calc_route/src/Obstacles.csv") {
+	ObstacleData(std::string fileName = "./src/calc_route/ABU2019Field.csv") {
 		std::fstream ifs(fileName.c_str());
 
 		if (ifs.fail()) {
@@ -27,11 +27,27 @@ class ObstacleData {
 		while (std::getline(ifs, objStr)) {
 			std::vector<int> pointdata;	 //座標のデータ[mm]
 			int tmp = 0;
+			int tmp2 = 0;  //加算の計算結果
+			int sig = 1;   //減算する場合
 			for (auto& i : objStr) {
 				if (i == ' ') continue;
-				if (i == ',') {
-					pointdata.push_back(tmp);
+				if (i == '+') {
+					tmp2 += tmp * sig;
 					tmp = 0;
+					sig = 1;
+					continue;
+				}
+				if (i == '-') {
+					tmp2 += tmp * sig;
+					tmp = 0;
+					sig = -1;
+					continue;
+				}
+				if (i == ',') {
+					pointdata.push_back(tmp2 + tmp * sig);
+					tmp = 0;
+					tmp2 = 0;
+					sig = 1;
 					continue;
 				}
 				if (i < '0' || i > '9') {  //#,etc..
@@ -42,7 +58,7 @@ class ObstacleData {
 				}
 			}
 
-			pointdata.push_back(tmp);
+			pointdata.push_back(tmp2 + tmp * sig);
 			if (pointdata.size() % 2) continue;	 //数値の個数は偶数でなくてはならない
 			if (pointdata.size() == 4) {		 // x1,y1,x2,y2
 				double x1 = pointdata[0] / 1000., y1 = pointdata[1] / 1000.,
