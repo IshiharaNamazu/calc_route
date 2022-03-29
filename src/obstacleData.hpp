@@ -69,8 +69,12 @@ class ObstacleData {
 				obstacle.push_back(Point(x2, y2));
 				obstacle.push_back(Point(x2, y1));
 				Obstacles.push_back(obstacle);
-			} else {  // xy1,xy2,xy3...
-					  //未記述
+			} else if (pointdata.size() > 4) {	// xy1,xy2,xy3...
+				std::vector<Point> obstacle;
+				for (size_t i = 0; i < pointdata.size(); i += 2) {
+					obstacle.push_back(Point(pointdata[i] / 1000., pointdata[i + 1] / 1000.));
+				}
+				Obstacles.push_back(obstacle);
 			}
 		}
 	}
