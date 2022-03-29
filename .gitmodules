@@ -1,0 +1,3 @@
+[submodule "ishihalib_cpp_gen"]
+	path = ishihalib_cpp_gen
+	url = https://github.com/ishikorotakkun/ishihalib_cpp_gen.git
