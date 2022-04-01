@@ -9,6 +9,7 @@
 struct PointNode : public ishihalib::Point {
 	int parent_;
 	std::vector<int> child_;
+	double cost;
 };
 
 class RRTStar {
@@ -26,6 +27,9 @@ class RRTStar {
 
 		randx = std::uniform_real_distribution<>(FIELD_X_MIN, FIELD_X_MAX);
 		randy = std::uniform_real_distribution<>(FIELD_Y_MIN, FIELD_Y_MAX);
+	}
+
+	void visualize() {
 	}
 
 	void calc() {

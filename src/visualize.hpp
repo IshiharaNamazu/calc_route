@@ -20,7 +20,9 @@ class RouteVisualize : public rclcpp::Node {
   private:
 	void timer_callback() {
 		field_viewer();
-		draw_point(rrtstar.get_random_point());
+		ishihalib::Point p = rrtstar.get_random_point();
+		ishihalib::LineSeg ls(rrtstar.get_random_point(), ishihalib::Point(0.1, 0.1));
+		draw_line_seg(ls);
 	}
 	void field_viewer() {
 		line_list.header.frame_id = "/map";
@@ -67,8 +69,8 @@ class RouteVisualize : public rclcpp::Node {
 		point.id = _id;
 		point.type = visualization_msgs::msg::Marker::POINTS;
 
-		point.scale.x = 0.2;
-		point.scale.y = 0.2;
+		point.scale.x = 0.05;
+		point.scale.y = 0.05;
 
 		geometry_msgs::msg::Point p;
 		p.x = P.x_;
@@ -79,8 +81,31 @@ class RouteVisualize : public rclcpp::Node {
 		point.color.a = 1.0;
 		marker_pub->publish(point);
 	}
-	void drawLineSeg(ishihalib::LineSeg) {
+	void draw_line_seg(ishihalib::LineSeg lineseg, std::string _ns = "lineseg", int _id = 0) {
+		visualization_msgs::msg::Marker line;
+		line.header.frame_id = "/map";
+		line.header.stamp = this->get_clock()->now();
+		line.ns = _ns;
+		line.action = visualization_msgs::msg::Marker::ADD;
+		line.pose.orientation.w = 1.0;
+		line.type = visualization_msgs::msg::Marker::LINE_LIST;
 
+		line.id = _id;
+		line.scale.x = 0.01;
+		line.scale.y = 0.01;
+		line.color.r = 1.0;
+		line.color.a = 1.0;
+
+		geometry_msgs::msg::Point p;
+		p.x = lineseg.a_.x_;
+		p.y = lineseg.a_.y_;
+		line.points.push_back(p);
+
+		p.x = lineseg.b_.x_;
+		p.y = lineseg.b_.y_;
+		line.points.push_back(p);
+
+		marker_pub->publish(line);
 	}
 	rclcpp::TimerBase::SharedPtr timer_;
 	rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub;
