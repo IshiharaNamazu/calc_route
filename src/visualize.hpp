@@ -1,4 +1,7 @@
 #pragma once
+#ifndef VISUALIZE_HPP_
+#define VISUALIZE_HPP_
+
 #include <chrono>
 #include <functional>
 #include <memory>
@@ -10,7 +13,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 using namespace std::chrono_literals;
-extern RRTStar rrtstar;
+// extern RRTStar rrtstar;
 class RouteVisualize : public rclcpp::Node {
   public:
 	RouteVisualize()
@@ -21,6 +24,7 @@ class RouteVisualize : public rclcpp::Node {
 
   private:
 	void timer_callback() {
+		// rrtstar.visualize();
 		field_viewer();
 	}
 	void field_viewer() {
@@ -120,7 +124,7 @@ class RouteVisualize : public rclcpp::Node {
 		lines.id = _id;
 		lines.scale.x = 0.01;
 		lines.scale.y = 0.01;
-		lines.color.r = 1.0;
+		lines.color.b = 1.0;
 		lines.color.a = 1.0;
 		for (auto &lineseg : linesegs) {
 			geometry_msgs::msg::Point p;
@@ -142,3 +146,4 @@ class RouteVisualize : public rclcpp::Node {
 };
 
 extern RouteVisualize::SharedPtr visualizer;
+#endif

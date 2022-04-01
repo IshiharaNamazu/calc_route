@@ -1,4 +1,7 @@
 #pragma once
+#ifndef RTTSTAR_HPP_
+#define RTTSTAR_HPP_
+
 #include <cstdio>
 #include <random>
 #include <vector>
@@ -52,7 +55,7 @@ class RRTStar {
 	void visualize() {
 		std::vector<ishihalib::LineSeg> lines;
 		for (auto &i : pointTree) {
-			if (i.parent_ > 0) {
+			if (i.parent_ >= 0) {
 				lines.push_back(ishihalib::LineSeg(pointTree[i.parent_], i));
 			}
 		}
@@ -61,8 +64,10 @@ class RRTStar {
 
 	void calc() {
 		ishihalib::Point p = get_random_point();
-		double cost;
-		if ((cost = get_cost(start_, p)) > 0) {
+		visualizer->draw_point(pointTree[0], "start");
+		visualizer->draw_point(p);
+		double cost = get_cost(start_, p);
+		if (cost >= 0) {
 			pointTree.push_back(PointNode(p, 0, cost));
 		}
 	}
@@ -87,3 +92,5 @@ class RRTStar {
 	std::uniform_real_distribution<> randy;
 	ishihalib::Point start_, goal_;
 };
+
+#endif

@@ -5,20 +5,23 @@
 #include "obstacleData.hpp"
 #include "visualize.hpp"
 ObstacleData obstacleData;
-RRTStar rrtstar;
 std::vector<PointNode> pointTree;
+RRTStar rrtstar;
+
+
 RouteVisualize::SharedPtr visualizer;
 using namespace std::chrono_literals;
 class calcRoute : public rclcpp::Node {
   public:
 	calcRoute() : Node("calc_route") {
-		timer_ = this->create_wall_timer(1s, std::bind(&calcRoute::timer_callback, this));
+		timer_ = this->create_wall_timer(40ms, std::bind(&calcRoute::timer_callback, this));
 	}
 
   private:
 	void timer_callback() {
-		// RCLCPP_INFO(this->get_logger(), "%d\n", obstacleData.size());
-		//  rrtstar.calc();
+		rrtstar.visualize();
+		RCLCPP_INFO(this->get_logger(), "%d\n", pointTree.size());
+		rrtstar.calc();
 	}
 	rclcpp::TimerBase::SharedPtr timer_;
 };
