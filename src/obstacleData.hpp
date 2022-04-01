@@ -15,7 +15,7 @@ class ObstacleData {
 	std::vector<std::vector<ishihalib::Point>> Obstacles;
 
   public:
-	ObstacleData(std::string fileName = "./src/calc_route/ABU2019Field.csv") {
+	ObstacleData(std::string fileName = "./src/calc_route/Torobo2021.csv") {
 		std::fstream ifs(fileName.c_str());
 
 		if (ifs.fail()) {
@@ -81,7 +81,7 @@ class ObstacleData {
 		return Obstacles.size();
 	}
 	std::vector<ishihalib::Point> get_Object(int i) {
-		return Obstacles[i];
+		return Obstacles.at(i);
 	}
 };
 

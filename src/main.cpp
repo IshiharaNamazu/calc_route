@@ -1,9 +1,11 @@
 #include <functional>
 #include <rclcpp/rclcpp.hpp>
 
+#include "RRTStar.hpp"
 #include "obstacleData.hpp"
 #include "visualize.hpp"
 ObstacleData obstacleData;
+RRTStar rrtstar;
 using namespace std::chrono_literals;
 class calcRoute : public rclcpp::Node {
   public:
@@ -13,7 +15,8 @@ class calcRoute : public rclcpp::Node {
 
   private:
 	void timer_callback() {
-		RCLCPP_INFO(this->get_logger(), "%d\n", obstacleData.size());
+		// RCLCPP_INFO(this->get_logger(), "%d\n", obstacleData.size());
+		//  rrtstar.calc();
 	}
 	rclcpp::TimerBase::SharedPtr timer_;
 };

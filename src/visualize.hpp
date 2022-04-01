@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 
+#include "../ishihalib_cpp_gen/utility/geometry.hpp"
 #include "obstacleData.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "visualization_msgs/msg/marker.hpp"
@@ -13,11 +14,15 @@ class RouteVisualize : public rclcpp::Node {
 	RouteVisualize()
 		: Node("RouteVisualize") {
 		marker_pub = this->create_publisher<visualization_msgs::msg::Marker>("vizmarker", 10);
-		timer_ = this->create_wall_timer(1000ms, std::bind(&RouteVisualize::timer_callback, this));
+		timer_ = this->create_wall_timer(200ms, std::bind(&RouteVisualize::timer_callback, this));
 	}
 
   private:
 	void timer_callback() {
+		field_viewer();
+		draw_point(rrtstar.get_random_point());
+	}
+	void field_viewer() {
 		line_list.header.frame_id = "/map";
 		line_list.header.stamp = this->get_clock()->now();
 		line_list.ns = "obstacles";
@@ -53,6 +58,29 @@ class RouteVisualize : public rclcpp::Node {
 		}
 
 		marker_pub->publish(line_list);
+	}
+	void draw_point(ishihalib::Point P, std::string _ns = "point", int _id = 0) {
+		visualization_msgs::msg::Marker point;
+		point.header.frame_id = "/map";
+		point.header.stamp = this->get_clock()->now();
+		point.ns = _ns;
+		point.id = _id;
+		point.type = visualization_msgs::msg::Marker::POINTS;
+
+		point.scale.x = 0.2;
+		point.scale.y = 0.2;
+
+		geometry_msgs::msg::Point p;
+		p.x = P.x_;
+		p.y = P.y_;
+		point.points.push_back(p);
+
+		point.color.g = 1.0f;
+		point.color.a = 1.0;
+		marker_pub->publish(point);
+	}
+	void drawLineSeg(ishihalib::LineSeg) {
+
 	}
 	rclcpp::TimerBase::SharedPtr timer_;
 	rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub;
