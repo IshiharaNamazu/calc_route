@@ -5,10 +5,12 @@
 #include <vector>
 
 #include "../ishihalib_cpp_gen/utility/geometry.hpp"
+#include "RRTStar.hpp"
 #include "obstacleData.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 using namespace std::chrono_literals;
+extern RRTStar rrtstar;
 class RouteVisualize : public rclcpp::Node {
   public:
 	RouteVisualize()
@@ -20,9 +22,6 @@ class RouteVisualize : public rclcpp::Node {
   private:
 	void timer_callback() {
 		field_viewer();
-		ishihalib::Point p = rrtstar.get_random_point();
-		ishihalib::LineSeg ls(rrtstar.get_random_point(), ishihalib::Point(0.1, 0.1));
-		draw_line_seg(ls);
 	}
 	void field_viewer() {
 		line_list.header.frame_id = "/map";
@@ -61,6 +60,8 @@ class RouteVisualize : public rclcpp::Node {
 
 		marker_pub->publish(line_list);
 	}
+
+  public:
 	void draw_point(ishihalib::Point P, std::string _ns = "point", int _id = 0) {
 		visualization_msgs::msg::Marker point;
 		point.header.frame_id = "/map";
@@ -107,7 +108,37 @@ class RouteVisualize : public rclcpp::Node {
 
 		marker_pub->publish(line);
 	}
+	void draw_line_segs(std::vector<ishihalib::LineSeg> linesegs, std::string _ns = "linesegs", int _id = 0) {
+		visualization_msgs::msg::Marker lines;
+		lines.header.frame_id = "/map";
+		lines.header.stamp = this->get_clock()->now();
+		lines.ns = _ns;
+		lines.action = visualization_msgs::msg::Marker::ADD;
+		lines.pose.orientation.w = 1.0;
+		lines.type = visualization_msgs::msg::Marker::LINE_LIST;
+
+		lines.id = _id;
+		lines.scale.x = 0.01;
+		lines.scale.y = 0.01;
+		lines.color.r = 1.0;
+		lines.color.a = 1.0;
+		for (auto &lineseg : linesegs) {
+			geometry_msgs::msg::Point p;
+			p.x = lineseg.a_.x_;
+			p.y = lineseg.a_.y_;
+			lines.points.push_back(p);
+
+			p.x = lineseg.b_.x_;
+			p.y = lineseg.b_.y_;
+			lines.points.push_back(p);
+		}
+
+		marker_pub->publish(lines);
+	}
 	rclcpp::TimerBase::SharedPtr timer_;
 	rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_pub;
 	visualization_msgs::msg::Marker line_list;
+	using SharedPtr = std::shared_ptr<RouteVisualize>;
 };
+
+extern RouteVisualize::SharedPtr visualizer;

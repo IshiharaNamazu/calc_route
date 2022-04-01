@@ -6,6 +6,8 @@
 #include "visualize.hpp"
 ObstacleData obstacleData;
 RRTStar rrtstar;
+std::vector<PointNode> pointTree;
+RouteVisualize::SharedPtr visualizer;
 using namespace std::chrono_literals;
 class calcRoute : public rclcpp::Node {
   public:
@@ -24,7 +26,7 @@ int main(int argc, char* argv[]) {
 	rclcpp::init(argc, argv);
 	rclcpp::executors::SingleThreadedExecutor exec;
 	auto node1 = std::make_shared<calcRoute>();
-	auto node2 = std::make_shared<RouteVisualize>();
+	auto node2 = visualizer = std::make_shared<RouteVisualize>();
 	exec.add_node(node1);
 	exec.add_node(node2);
 	exec.spin();
