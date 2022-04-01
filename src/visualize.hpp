@@ -32,7 +32,7 @@ class RouteVisualize : public rclcpp::Node {
 		line_list.color.a = 1.0;
 
 		for (size_t i = 0; i < obstacleData.size(); i++) {
-			std::vector<Point> obj = obstacleData.get_Object(i);
+			std::vector<ishihalib::Point> obj = obstacleData.get_Object(i);
 			geometry_msgs::msg::Point p;
 
 			p.x = obj[0].x_;  //オブジェクト描画

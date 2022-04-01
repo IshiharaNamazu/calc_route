@@ -5,15 +5,14 @@
 #include <iostream>
 #include <regex>
 #include <string>
+#include <utility>
 #include <vector>
 
-struct Point {
-	double x_, y_;
-	Point(double x, double y) : x_(x), y_(y) {}
-};
+#include "../ishihalib_cpp_gen/utility/geometry.hpp"
+
 class ObstacleData {
   private:
-	std::vector<std::vector<Point>> Obstacles;
+	std::vector<std::vector<ishihalib::Point>> Obstacles;
 
   public:
 	ObstacleData(std::string fileName = "./src/calc_route/ABU2019Field.csv") {
@@ -63,16 +62,16 @@ class ObstacleData {
 			if (pointdata.size() == 4) {		 // x1,y1,x2,y2
 				double x1 = pointdata[0] / 1000., y1 = pointdata[1] / 1000.,
 					   x2 = pointdata[2] / 1000., y2 = pointdata[3] / 1000.;
-				std::vector<Point> obstacle;
-				obstacle.push_back(Point(x1, y1));
-				obstacle.push_back(Point(x1, y2));
-				obstacle.push_back(Point(x2, y2));
-				obstacle.push_back(Point(x2, y1));
+				std::vector<ishihalib::Point> obstacle;
+				obstacle.push_back(ishihalib::Point(x1, y1));
+				obstacle.push_back(ishihalib::Point(x1, y2));
+				obstacle.push_back(ishihalib::Point(x2, y2));
+				obstacle.push_back(ishihalib::Point(x2, y1));
 				Obstacles.push_back(obstacle);
 			} else if (pointdata.size() > 4) {	// xy1,xy2,xy3...
-				std::vector<Point> obstacle;
+				std::vector<ishihalib::Point> obstacle;
 				for (size_t i = 0; i < pointdata.size(); i += 2) {
-					obstacle.push_back(Point(pointdata[i] / 1000., pointdata[i + 1] / 1000.));
+					obstacle.push_back(ishihalib::Point(pointdata[i] / 1000., pointdata[i + 1] / 1000.));
 				}
 				Obstacles.push_back(obstacle);
 			}
@@ -81,7 +80,7 @@ class ObstacleData {
 	size_t size() {
 		return Obstacles.size();
 	}
-	std::vector<Point> get_Object(int i) {
+	std::vector<ishihalib::Point> get_Object(int i) {
 		return Obstacles[i];
 	}
 };
