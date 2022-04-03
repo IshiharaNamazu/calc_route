@@ -1,6 +1,4 @@
 #pragma once
-#ifndef RTTSTAR_HPP_
-#define RTTSTAR_HPP_
 
 #include <cstdio>
 #include <random>
@@ -25,8 +23,9 @@ class RRTStar {
 	bool crossing_field_object(ishihalib::LineSeg lineseg) {
 		for (size_t i = 0; i < obstacleData.size(); i++) {
 			std::vector<ishihalib::Point> obj = obstacleData.get_Object(i);
-			for (size_t j = 1; j < obj.size(); j++) {
-				ishihalib::LineSeg lineseg2(obj[j - 1], obj[j]);
+			for (size_t j = 0; j < obj.size(); j++) {
+				ishihalib::LineSeg lineseg2(obj[obj.size() - 1], obj[0]);
+				if (j != 0) lineseg2 = ishihalib::LineSeg(obj[j - 1], obj[j]);
 				if (ishihalib::LineSeg::crossing(lineseg, lineseg2)) {
 					return true;
 				}
@@ -36,7 +35,7 @@ class RRTStar {
 	}
 
   public:
-	RRTStar(ishihalib::Point start = ishihalib::Point(0.1, 0.1), ishihalib::Point goal = ishihalib::Point(1, 1)) : start_(start), goal_(goal) {
+	RRTStar(ishihalib::Point start = ishihalib::Point(0.1, 0.1), ishihalib::Point goal = ishihalib::Point(2.45 + 4.2 - 0.5, 9.9)) : start_(start), goal_(goal) {
 		pointTree.push_back(start);
 		std::random_device seed_gen;
 		rand_engine = std::default_random_engine(seed_gen());
@@ -52,25 +51,9 @@ class RRTStar {
 		randy = std::uniform_real_distribution<>(FIELD_Y_MIN, FIELD_Y_MAX);
 	}
 
-	void visualize() {
-		std::vector<ishihalib::LineSeg> lines;
-		for (auto &i : pointTree) {
-			if (i.parent_ >= 0) {
-				lines.push_back(ishihalib::LineSeg(pointTree[i.parent_], i));
-			}
-		}
-		visualizer->draw_line_segs(lines);
-	}
+	void visualize();
 
-	void calc() {
-		ishihalib::Point p = get_random_point();
-		visualizer->draw_point(pointTree[0], "start");
-		visualizer->draw_point(p);
-		double cost = get_cost(start_, p);
-		if (cost >= 0) {
-			pointTree.push_back(PointNode(p, 0, cost));
-		}
-	}
+	void calc();
 
 	double get_cost(ishihalib::Point before, ishihalib::Point after) {
 		ishihalib::LineSeg ls(before, after);
@@ -92,5 +75,4 @@ class RRTStar {
 	std::uniform_real_distribution<> randy;
 	ishihalib::Point start_, goal_;
 };
-
-#endif
+extern RRTStar rrtstar;
