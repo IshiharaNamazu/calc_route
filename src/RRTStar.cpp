@@ -28,16 +28,30 @@ void RRTStar::calc() {
 			}
 		}
 	}
-	if (mincost > 0) {
+	if (mincost > 0) {	//ノード追加
 		PointNode child(p);
 		child.cost_ = mincost;
 		child.parent_ = nearPoint;
 		pointTree[nearPoint].child_.push_back(pointTree.size());
 		pointTree.push_back(child);
+
+		if (false) {
+			for (size_t i = 0; i < (pointTree.size() - 1); i++) {
+				if (pointTree[i].cost_ < pointTree.back().cost_) {
+					double cost_dif = pointTree[i].cost_ - (pointTree.back().cost_ + get_cost(pointTree.back(), pointTree[i]));
+					if (cost_dif > 0) {
+						pointTree[i].parent_ = pointTree.size() - 1;  //最後のノードを親に
+						pointTree.back().child_.push_back(i);
+						pointTree[i].declease_cost(cost_dif);
+					} else {
+					}
+				}
+			}
+		}
 	}
 }
 
-void RRTStar::visualize() {
+double RRTStar::visualize() {
 	int nearPoint = -1;
 	double mincost = -1;
 	for (size_t i = 0; i < pointTree.size(); i++) {
@@ -69,5 +83,6 @@ void RRTStar::visualize() {
 	visualizer->draw_point(pointTree[nearPoint], "start");
 	visualizer->draw_point(start_, "start");
 	visualizer->draw_point(goal_, "goal");
+	return mincost;
 }
 extern RRTStar rrtstar;

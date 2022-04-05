@@ -52,6 +52,6 @@ void RouteVisualize::field_viewer() {
 }
 
 void RouteVisualize::tree_viewer() {
-	rrtstar.visualize();
 	RCLCPP_INFO(this->get_logger(), "%d\n", pointTree.size());
+	RCLCPP_INFO(this->get_logger(), "cost:%lf\n", rrtstar.visualize());
 }

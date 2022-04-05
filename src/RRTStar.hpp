@@ -7,6 +7,8 @@
 #include "../ishihalib_cpp_gen/utility/geometry.hpp"
 #include "obstacleData.hpp"
 #include "visualize.hpp"
+struct PointNode;
+extern std::vector<PointNode> pointTree;
 
 struct PointNode : public ishihalib::Point {
 	int parent_;
@@ -15,9 +17,13 @@ struct PointNode : public ishihalib::Point {
 	PointNode(ishihalib::Point p) : Point(p), parent_(-1), cost_(0) {
 	}
 	PointNode(ishihalib::Point p, int parent, double cost) : Point(p), parent_(parent), cost_(cost) {}
+	void declease_cost(double d) {
+		cost_ -= d;
+		for (auto &i : child_) {
+			pointTree[i].declease_cost(d);
+		}
+	}
 };
-
-extern std::vector<PointNode> pointTree;
 
 class RRTStar {
 	bool crossing_field_object(ishihalib::LineSeg lineseg) {
@@ -51,7 +57,7 @@ class RRTStar {
 		randy = std::uniform_real_distribution<>(FIELD_Y_MIN, FIELD_Y_MAX);
 	}
 
-	void visualize();
+	double visualize();
 
 	void calc();
 
