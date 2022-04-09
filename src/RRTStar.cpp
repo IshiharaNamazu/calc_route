@@ -35,15 +35,18 @@ void RRTStar::calc() {
 		pointTree[nearPoint].child_.push_back(pointTree.size());
 		pointTree.push_back(child);
 
-		if (false) {
+		if (true) {
 			for (size_t i = 0; i < (pointTree.size() - 1); i++) {
 				if (pointTree[i].cost_ < pointTree.back().cost_) {
-					double cost_dif = pointTree[i].cost_ - (pointTree.back().cost_ + get_cost(pointTree.back(), pointTree[i]));
-					if (cost_dif > 0) {
-						pointTree[i].parent_ = pointTree.size() - 1;  //最後のノードを親に
-						pointTree.back().child_.push_back(i);
-						pointTree[i].declease_cost(cost_dif);
-					} else {
+					double addcost = get_cost(pointTree.back(), pointTree[i]);
+					if (addcost > 0) {
+						double cost_dif = pointTree[i].cost_ - (pointTree.back().cost_ + addcost);
+						if (cost_dif > 0) {
+							printf("here***********************************************************\n");
+							pointTree[i].parent_ = pointTree.size() - 1;  //最後のノードを親に
+							pointTree.back().child_.push_back(i);
+							pointTree[i].declease_cost(cost_dif);
+						}
 					}
 				}
 			}
