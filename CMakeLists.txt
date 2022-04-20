@@ -19,7 +19,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(visualization_msgs REQUIRED)
-add_executable(calc_route src/main.cpp src/RRTStar.cpp src/visualize.cpp)
+add_executable(calc_route src/main.cpp src/visualize.cpp)
 ament_target_dependencies(calc_route rclcpp visualization_msgs)
 # uncomment the following section in order to fill in
 # further dependencies manually.

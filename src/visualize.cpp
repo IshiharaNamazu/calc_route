@@ -7,7 +7,6 @@
 #include <vector>
 
 #include "../ishihalib_cpp_gen/utility/geometry.hpp"
-#include "RRTStar.hpp"
 #include "obstacleData.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "visualization_msgs/msg/marker.hpp"
@@ -49,9 +48,4 @@ void RouteVisualize::field_viewer() {
 	}
 
 	marker_pub->publish(line_list);
-}
-
-void RouteVisualize::tree_viewer() {
-	RCLCPP_INFO(this->get_logger(), "%d\n", pointTree.size());
-	RCLCPP_INFO(this->get_logger(), "cost:%lf\n", rrtstar.visualize());
 }

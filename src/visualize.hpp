@@ -8,16 +8,13 @@
 #include <vector>
 
 #include "../ishihalib_cpp_gen/utility/geometry.hpp"
-#include "RRTStar.hpp"
 #include "obstacleData.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "visualization_msgs/msg/marker.hpp"
 using namespace std::chrono_literals;
 class RouteVisualize : public rclcpp::Node {
 	void field_viewer();
-	void tree_viewer();
 	void timer_callback() {
-		tree_viewer();
 		field_viewer();
 	}
 
