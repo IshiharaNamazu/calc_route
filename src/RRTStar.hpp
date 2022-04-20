@@ -39,9 +39,22 @@ class RRTStar {
 		}
 		return false;
 	}
+	bool collision_field_object(ishihalib::LineSeg lineseg, double d) {
+		for (size_t i = 0; i < obstacleData.size(); i++) {
+			std::vector<ishihalib::Point> obj = obstacleData.get_Object(i);
+			for (size_t j = 0; j < obj.size(); j++) {
+				ishihalib::LineSeg lineseg2(obj[obj.size() - 1], obj[0]);
+				if (j != 0) lineseg2 = ishihalib::LineSeg(obj[j - 1], obj[j]);
+				if (ishihalib::LineSeg::distance(lineseg, lineseg2) < d) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
   public:
-	RRTStar(ishihalib::Point start = ishihalib::Point(0.1, 0.1), ishihalib::Point goal = ishihalib::Point(2.45 + 4.2 - 0.5, 9.9)) : start_(start), goal_(goal) {
+	RRTStar(ishihalib::Point start = ishihalib::Point(0.5, 0.5), ishihalib::Point goal = ishihalib::Point(4.5 + 1.95 - 0.5, 8.0 + 0.5)) : start_(start), goal_(goal) {
 		pointTree.push_back(start);
 		std::random_device seed_gen;
 		rand_engine = std::default_random_engine(seed_gen());
@@ -63,6 +76,7 @@ class RRTStar {
 
 	double get_cost(ishihalib::Point before, ishihalib::Point after) {
 		ishihalib::LineSeg ls(before, after);
+		// if (collision_field_object(ls, 0.3)) return -1;
 		if (crossing_field_object(ls)) return -1;
 		return ls.length();
 	}

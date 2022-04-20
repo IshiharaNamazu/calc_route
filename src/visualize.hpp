@@ -76,7 +76,7 @@ class RouteVisualize : public rclcpp::Node {
 
 		marker_pub->publish(line);
 	}
-	void draw_line_segs(std::vector<ishihalib::LineSeg> linesegs, std::string _ns = "linesegs", int _id = 0) {
+	void draw_line_segs(std::vector<ishihalib::LineSeg> linesegs, std::string _ns = "linesegs", int _id = 0, float r = 0, float g = 1, float b = 0) {
 		visualization_msgs::msg::Marker lines;
 		lines.header.frame_id = "/map";
 		lines.header.stamp = this->get_clock()->now();
@@ -88,7 +88,9 @@ class RouteVisualize : public rclcpp::Node {
 		lines.id = _id;
 		lines.scale.x = 0.01;
 		lines.scale.y = 0.01;
-		lines.color.g = 1.0;
+		lines.color.r = r;
+		lines.color.g = g;
+		lines.color.b = b;
 		lines.color.a = 1.0;
 		for (auto &lineseg : linesegs) {
 			geometry_msgs::msg::Point p;

@@ -42,7 +42,6 @@ void RRTStar::calc() {
 					if (addcost > 0) {
 						double cost_dif = pointTree[i].cost_ - (pointTree.back().cost_ + addcost);
 						if (cost_dif > 0) {
-							printf("here***********************************************************\n");
 							pointTree[i].parent_ = pointTree.size() - 1;  //最後のノードを親に
 							pointTree.back().child_.push_back(i);
 							pointTree[i].declease_cost(cost_dif);
@@ -71,19 +70,28 @@ double RRTStar::visualize() {
 			}
 		}
 	}
-	std::vector<ishihalib::LineSeg> lines;
+	visualizer->draw_point(pointTree[nearPoint], "end");
+	std::vector<ishihalib::LineSeg> route;
 	if (mincost > 0) {
-		lines.push_back(ishihalib::LineSeg(goal_, pointTree[nearPoint]));
+		route.push_back(ishihalib::LineSeg(goal_, pointTree[nearPoint]));
 		while (nearPoint != 0) {
 			int per = pointTree[nearPoint].parent_;
 
-			lines.push_back(ishihalib::LineSeg(pointTree[nearPoint], pointTree[per]));
+			route.push_back(ishihalib::LineSeg(pointTree[nearPoint], pointTree[per]));
 			nearPoint = per;
 		}
 	}
 	// lines.clear();
-	visualizer->draw_line_segs(lines);
-	visualizer->draw_point(pointTree[nearPoint], "start");
+	visualizer->draw_line_segs(route, "route", 0, 1, 0, 0);
+
+	if (true) {
+		std::vector<ishihalib::LineSeg> tree;
+		for (size_t i = 1; i < pointTree.size(); i++) {
+			tree.push_back(ishihalib::LineSeg(pointTree[i], pointTree[pointTree[i].parent_]));
+		}
+		visualizer->draw_line_segs(tree, "tree", 0, 0, 1, 0);
+	}
+
 	visualizer->draw_point(start_, "start");
 	visualizer->draw_point(goal_, "goal");
 	return mincost;

@@ -19,11 +19,12 @@ class calcRoute : public rclcpp::Node {
 
   private:
 	void timer_callback() {
+		rrtstar.calc();
 	}
 	rclcpp::TimerBase::SharedPtr timer_;
 };
 void calc() {
-	while (1) rrtstar.calc();
+	// while (1) rrtstar.calc();
 }
 int main(int argc, char* argv[]) {
 	rclcpp::init(argc, argv);
