@@ -4,7 +4,7 @@
 
 #include "obstacleData.hpp"
 #include "visualize.hpp"
-ObstacleData obstacleData("./src/calc_route/ABU2019Field.csv");
+ObstacleData obstacleData("./src/calc_route/myField.csv");
 
 RouteVisualize::SharedPtr visualizer;
 using namespace std::chrono_literals;

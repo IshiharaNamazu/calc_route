@@ -15,7 +15,7 @@ class ObstacleData {
 	std::vector<std::vector<ishihalib::Point>> Obstacles;
 
   public:
-	ObstacleData(std::string fileName = "./src/calc_route/ABU2019Field.csv") {
+	ObstacleData(std::string fileName = "./src/calc_route/myField.csv") {
 		std::fstream ifs(fileName.c_str());
 
 		if (ifs.fail()) {
