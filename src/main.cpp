@@ -3,6 +3,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <thread>
 
+#include "../ishihalib_ros2/rviz2/rvizdraw.hpp"
 #include "makeroute.hpp"
 #include "obstacleData.hpp"
 #include "visualize.hpp"

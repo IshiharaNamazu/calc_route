@@ -40,7 +40,7 @@ void add_arc_targets(std::vector<PointTargetData> &tgs, ishihalib::Point center,
 }
 
 void make_route() {
-	double ds = 10 / 1000.;
+	double ds = 100 / 1000.;
 	ishihalib::Point a(800 / 1000., 2000 / 1000.), b(2400 / 1000., 2000 / 1000.);
 	ishihalib::LineSeg ls(a, b);
 	add_line_targets(route, ls, ds);
@@ -49,10 +49,9 @@ void make_route() {
 }
 
 void route_visualize() {
-	return;
 	size_t num = route.size();
-	for (size_t i = 0; i < num; i += num / 400) {
+	for (size_t i = 0; i < num; i += ((num + 39) / 40)) {
 		ishihalib::Point p(route[i].pos[0], route[i].pos[1]);
-		visualizer->draw_point(p, "pointcloud", i);
+		visualizer->rviz2.draw_point(p);
 	}
 }
