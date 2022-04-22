@@ -15,8 +15,8 @@ void add_line_targets(std::vector<PointTargetData> &tgs, ishihalib::LineSeg line
 	double dt = ds / lineseg.length();
 	while (t < 1) {
 		PointTargetData p;
-		p.pos[0] = lineseg.a_.x_ * (1 - t) + lineseg.b_.x_ * t;
-		p.pos[1] = lineseg.a_.y_ * (1 - t) + lineseg.b_.y_ * t;
+		p.pos[0] = lineseg.a_.x_ * (1. - t) + lineseg.b_.x_ * t;
+		p.pos[1] = lineseg.a_.y_ * (1. - t) + lineseg.b_.y_ * t;
 		p.pos[2] = theta;
 
 		tgs.push_back(p);
@@ -40,18 +40,18 @@ void add_arc_targets(std::vector<PointTargetData> &tgs, ishihalib::Point center,
 }
 
 void make_route() {
-	double ds = 100 / 1000.;
+	double ds = 10 / 1000.;
 	ishihalib::Point a(800 / 1000., 2000 / 1000.), b(2400 / 1000., 2000 / 1000.);
 	ishihalib::LineSeg ls(a, b);
 	add_line_targets(route, ls, ds);
-	// ishihalib::Point center(800 / 1000., 1600 / 1000.);
-	//  add_arc_targets(route, center, 400 / 1000., 0, M_PI, ds);
+	ishihalib::Point center(800 / 1000., 1600 / 1000.);
+	add_arc_targets(route, center, 400 / 1000., -M_PI_2, -3. * M_PI_2, ds);
 }
 
 void route_visualize() {
 	size_t num = route.size();
 	for (size_t i = 0; i < num; i += ((num + 39) / 40)) {
 		ishihalib::Point p(route[i].pos[0], route[i].pos[1]);
-		visualizer->rviz2.draw_point(p);
+		visualizer->rviz2.draw_point(p, "route", i);
 	}
 }
