@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "../ishihalib_cpp_gen/utility/geometry.hpp"
+#include "makeroute.hpp"
 #include "obstacleData.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "visualization_msgs/msg/marker.hpp"
@@ -16,6 +17,7 @@ class RouteVisualize : public rclcpp::Node {
 	void field_viewer();
 	void timer_callback() {
 		field_viewer();
+		route_visualize();
 	}
 
   public:

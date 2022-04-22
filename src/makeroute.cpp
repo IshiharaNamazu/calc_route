@@ -1,13 +1,10 @@
+#include "makeroute.hpp"
+
 #include <array>
 #include <vector>
 
 #include "../ishihalib_cpp_gen/utility/geometry.hpp"
-
-struct PointTargetData {
-	std::array<double, 3> pos;
-	std::array<double, 3> velocity;
-	std::array<double, 3> accel;
-};
+#include "visualize.hpp"
 
 std::vector<PointTargetData> route;
 
@@ -28,7 +25,7 @@ void add_line_targets(std::vector<PointTargetData> &tgs, ishihalib::LineSeg line
 }
 
 void add_arc_targets(std::vector<PointTargetData> &tgs, ishihalib::Point center, double r, double theta_b, double theta_e, double ds) {
-	double length = abs(theta_e - theta_b) * r;
+	double length = (abs(theta_e - theta_b)) * r;
 	double dt = ds / length;
 	double t = 0;
 	while (t < 1) {
@@ -42,8 +39,20 @@ void add_arc_targets(std::vector<PointTargetData> &tgs, ishihalib::Point center,
 	}
 }
 
-void makeroute() {
-	ishihalib::Point a(800, 2000), b(2400, 2000);
+void make_route() {
+	double ds = 10 / 1000.;
+	ishihalib::Point a(800 / 1000., 2000 / 1000.), b(2400 / 1000., 2000 / 1000.);
 	ishihalib::LineSeg ls(a, b);
-	add_line_targets(route, ls, 10 / 1000.);
+	add_line_targets(route, ls, ds);
+	// ishihalib::Point center(800 / 1000., 1600 / 1000.);
+	//  add_arc_targets(route, center, 400 / 1000., 0, M_PI, ds);
+}
+
+void route_visualize() {
+	return;
+	size_t num = route.size();
+	for (size_t i = 0; i < num; i += num / 400) {
+		ishihalib::Point p(route[i].pos[0], route[i].pos[1]);
+		visualizer->draw_point(p, "pointcloud", i);
+	}
 }
