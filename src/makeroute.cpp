@@ -108,9 +108,13 @@ void make_route() {
 			}
 		}
 	}
-	for (size_t i = 1; i < viaCircle.size() - 1; i++) {
+	for (size_t i = 1; i < viaCircle.size(); i++) {
 		printf("r:%lf, b:%lf, e:%lf\n", viaCircle[i].r_, viaCircle[i].begin_, viaCircle[i].end_);
-		add_arc_targets(route, viaCircle[i], ds);
+		ishihalib::Point a, b;
+		a = ishihalib::Point(viaCircle[i - 1].center_.get_complex() + std::polar(viaCircle[i - 1].r_, viaCircle[i - 1].end_));
+		b = ishihalib::Point(viaCircle[i].center_.get_complex() + std::polar(viaCircle[i].r_, viaCircle[i].begin_));
+		add_line_targets(route, ishihalib::LineSeg(a, b), ds);
+		if (i != viaCircle.size() - 1) add_arc_targets(route, viaCircle[i], ds);
 	}
 	return;
 	ishihalib::Point a(800 / 1000., 2000 / 1000.), b(2400 / 1000., 2000 / 1000.);
