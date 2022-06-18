@@ -7,7 +7,7 @@
 #include "makeroute.hpp"
 #include "obstacleData.hpp"
 #include "visualize.hpp"
-ObstacleData obstacleData("./src/calc_route/myField.csv");
+ObstacleData obstacleData("./src/calc_route/Torobo2022.csv");
 
 RouteVisualize::SharedPtr visualizer;
 using namespace std::chrono_literals;
