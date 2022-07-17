@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <array>
+#include <fstream>
+#include <iostream>
 #include <vector>
 
 #include "../ishihalib_cpp_gen/types/circle.hpp"
@@ -13,7 +15,7 @@ std::vector<PointTargetData> route;
 
 void route_ramp(double ds);
 struct InscribedCircle {
-	InscribedCircle(char mode, ishihalib::Point center, double r, double v=MAX_VELOCITY) : mode_(mode), center_(center), r_(r), v_(v) {
+	InscribedCircle(char mode, ishihalib::Point center, double r, double v = MAX_VELOCITY) : mode_(mode), center_(center), r_(r), v_(v) {
 	}
 	char mode_;	 //"s,z,c,d"
 	ishihalib::Point center_;
@@ -33,8 +35,10 @@ void add_line_targets(std::vector<PointTargetData> &tgs, ishihalib::LineSeg line
 		p.pos[0] = lineseg.a_.x_ * (1. - t) + lineseg.b_.x_ * t;
 		p.pos[1] = lineseg.a_.y_ * (1. - t) + lineseg.b_.y_ * t;
 		p.pos[2] = theta;
-		if(t==0.0)p.set_polarvelocity(v, theta);
-		else p.set_polarvelocity(MAX_VELOCITY, theta);
+		if (t == 0.0)
+			p.set_polarvelocity(v, theta);
+		else
+			p.set_polarvelocity(MAX_VELOCITY, theta);
 
 		tgs.push_back(p);
 		t += dt;
@@ -92,18 +96,18 @@ void connect_circle(InscribedCircle &c1, InscribedCircle &c2) {
 
 void make_route() {
 	double ds = 10 / 1000.;
-	constexpr double MACHINE_SIZE_X=700.0;
-	constexpr double MACHINE_SIZE_Y=700.0;
-	constexpr double R=400.0/1000;
+	constexpr double MACHINE_SIZE_X = 700.0;
+	constexpr double MACHINE_SIZE_Y = 700.0;
+	constexpr double R = 445.0 / 1000;
 	viaCircle = {
-		InscribedCircle('c', ishihalib::Point((MACHINE_SIZE_X/2) / 1000., (MACHINE_SIZE_Y/2) / 1000.), 0, 0),
-		InscribedCircle('c', ishihalib::Point((4500-700) / 1000., (500+MACHINE_SIZE_Y/2) / 1000.), 0, 0),
-		InscribedCircle('c', ishihalib::Point((3500) / 1000., (1281+19) / 1000.), R),
-		InscribedCircle('c', ishihalib::Point((MACHINE_SIZE_X/2) / 1000., (1281+38+MACHINE_SIZE_Y/2) / 1000.), 0, 0),
-		InscribedCircle('d', ishihalib::Point((1200) / 1000., (4100-940.5) / 1000.), R),
-		InscribedCircle('z', ishihalib::Point((2200) / 1000., (4100-940.5) / 1000.), R),
-		InscribedCircle('s', ishihalib::Point((3200) / 1000., (4100-940.5) / 1000.), R),
-		InscribedCircle('d', ishihalib::Point((4500-500-MACHINE_SIZE_X/2) / 1000., (4100-940.5) / 1000.), 0, 0),
+		// InscribedCircle('c', ishihalib::Point((MACHINE_SIZE_X/2) / 1000., (MACHINE_SIZE_Y/2) / 1000.), 0, 0),
+		// InscribedCircle('c', ishihalib::Point((4500-700) / 1000., (500+MACHINE_SIZE_Y/2) / 1000.), 0, 0),
+		// InscribedCircle('c', ishihalib::Point((3500) / 1000., (1281+19) / 1000.), R),
+		InscribedCircle('c', ishihalib::Point((MACHINE_SIZE_X / 2) / 1000., (1281 + 38 + MACHINE_SIZE_Y / 2) / 1000.), 0, 0),
+		InscribedCircle('d', ishihalib::Point((1200) / 1000., (4100 - 940.5) / 1000.), R),
+		InscribedCircle('z', ishihalib::Point((2200) / 1000., (4100 - 940.5) / 1000.), R),
+		InscribedCircle('s', ishihalib::Point((3200) / 1000., (4100 - 940.5) / 1000.), R),
+		InscribedCircle('d', ishihalib::Point((4500 - 500 - MACHINE_SIZE_X / 2) / 1000., (4100 - 940.5) / 1000.), 0, 0),
 	};
 	for (size_t i = 1; i < viaCircle.size(); i++) {
 		connect_circle(viaCircle[i - 1], viaCircle[i]);
@@ -125,7 +129,7 @@ void make_route() {
 		ishihalib::Point a, b;
 		a = ishihalib::Point(viaCircle[i - 1].center_.get_complex() + std::polar(viaCircle[i - 1].r_, viaCircle[i - 1].end_));
 		b = ishihalib::Point(viaCircle[i].center_.get_complex() + std::polar(viaCircle[i].r_, viaCircle[i].begin_));
-		add_line_targets(route, ishihalib::LineSeg(a, b), ds, viaCircle[i-1].v_);
+		add_line_targets(route, ishihalib::LineSeg(a, b), ds, viaCircle[i - 1].v_);
 		if (i != viaCircle.size() - 1) add_arc_targets(route, viaCircle[i], ds);
 	}
 	route[0].set_polarvelocity(0.1, route[0].get_velocity_arg());
@@ -135,15 +139,27 @@ void make_route() {
 }
 
 void route_visualize() {
+	std::ofstream outputfile("./src/calc_route/route.txt");
 	size_t num = route.size();
 	size_t drawnum = 200;
 	for (size_t i = 0; i < num; i += ((num + drawnum - 1) / drawnum)) {
+		double t = route[i].get_velocity_size() / MAX_VELOCITY;
 		ishihalib::Point p(route[i].pos[0], route[i].pos[1]);
 		ishihalib::LineSeg v(p, p.get_complex() + std::complex<double>(route[i].velocity[0], route[i].velocity[1]));
-		double t = route[i].get_velocity_size()/MAX_VELOCITY;
-		visualizer->rviz2.draw_point(p, "route", i, 1, 1-t, 1-t);
+		visualizer->rviz2.draw_point(p, "route", i, 1, 1 - t, 1 - t);
 		visualizer->rviz2.draw_line_seg(v, "velocity", i);
 	}
+	outputfile << "n = " << num << "\n";
+	outputfile << "\n\n\n{\n";
+	for (size_t i = 0; i < num; i++) {
+		outputfile << " std::array<MoveTarget, 3>{\n";
+		outputfile << "  MoveTarget(" << route[i].pos[1] << ',' << route[i].pos[0] << ',' << 0 << "),\n";
+		outputfile << "  MoveTarget(" << route[i].velocity[1] << ',' << route[i].velocity[0] << ',' << 0 << "),\n";
+		outputfile << "  MoveTarget(" << 0 << ',' << 0 << ',' << 0 << "),\n";
+		outputfile << "},";
+	}
+	outputfile << "}";
+	outputfile.close();
 }
 
 void route_ramp(double ds) {
