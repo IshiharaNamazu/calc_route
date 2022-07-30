@@ -12,6 +12,7 @@
 #include "visualize.hpp"
 
 std::vector<PointTargetData> route;
+void write_pyroute();
 
 void route_ramp(double ds);
 struct InscribedCircle {
@@ -100,9 +101,9 @@ void make_route() {
 	constexpr double MACHINE_SIZE_Y = 700.0;
 	constexpr double R = 445.0 / 1000;
 	viaCircle = {
-		// InscribedCircle('c', ishihalib::Point((MACHINE_SIZE_X/2) / 1000., (MACHINE_SIZE_Y/2) / 1000.), 0, 0),
-		// InscribedCircle('c', ishihalib::Point((4500-700) / 1000., (500+MACHINE_SIZE_Y/2) / 1000.), 0, 0),
-		// InscribedCircle('c', ishihalib::Point((3500) / 1000., (1281+19) / 1000.), R),
+		InscribedCircle('c', ishihalib::Point((MACHINE_SIZE_X / 2) / 1000., (MACHINE_SIZE_Y / 2) / 1000.), 0, 0),
+		InscribedCircle('c', ishihalib::Point((4500 - 700) / 1000., (MACHINE_SIZE_Y / 2) / 1000.), 0, 0),
+		InscribedCircle('c', ishihalib::Point((3500) / 1000., (1281 + 19) / 1000.), R),
 		InscribedCircle('c', ishihalib::Point((MACHINE_SIZE_X / 2) / 1000., (1281 + 38 + MACHINE_SIZE_Y / 2) / 1000.), 0, 0),
 		InscribedCircle('d', ishihalib::Point((1200) / 1000., (4100 - 940.5) / 1000.), R),
 		InscribedCircle('z', ishihalib::Point((2200) / 1000., (4100 - 940.5) / 1000.), R),
@@ -135,6 +136,7 @@ void make_route() {
 	route[0].set_polarvelocity(0.1, route[0].get_velocity_arg());
 	route[route.size() - 1].set_polarvelocity(0.1, route[route.size() - 1].get_velocity_arg());
 	route_ramp(ds);
+	write_pyroute();
 	return;
 }
 
@@ -180,4 +182,25 @@ void route_ramp(double ds) {
 			route[i].set_polarvelocity(v, route[i].get_velocity_arg());
 		}
 	}
+}
+
+void write_pyroute() {
+	std::ofstream outputfile("./src/calc_route/pyroute.py");
+	size_t num = route.size();
+	// size_t drawnum = 200;
+	double t = 0;
+	outputfile << "route = [\n";
+	for (size_t i = 0; i < num; i++) {
+		outputfile << "    [ " << t << " , " << route[i].pos[1] << " , " << route[i].pos[0] << " , " << (M_PI_2 - route[i].pos[2]) << " ],\n";
+		double vv = 0;
+		if (i != 0) vv = route[i - 1].velocity[0] * route[i - 1].velocity[0] + route[i - 1].velocity[1] * route[i - 1].velocity[1];
+		if (vv >= 1e-6) {
+			double dx = route[i].pos[1] - route[i - 1].pos[1];
+			double dy = route[i].pos[0] - route[i - 1].pos[0];
+			t += sqrt((dx * dx + dy * dy) / vv);
+		} else
+			t += 1e-3;
+	}
+	outputfile << "]";
+	outputfile.close();
 }
