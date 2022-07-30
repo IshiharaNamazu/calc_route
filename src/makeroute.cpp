@@ -261,7 +261,7 @@ void write_cpp_arrays() {
 			outputfile << "    std::array<double, 3>{" << route[i].pos[1] << " , " << route[i].pos[0] << " , " << (M_PI_2 - route[i].pos[2]) << " },\n";
 			outputfile << "    std::array<double, 3>{" << route[i].velocity[1] << " , " << route[i].velocity[0] << " , " << (-route[i].velocity[2]) << " },\n";
 			outputfile << "    std::array<double, 3>{" << route[i].accel[1] << " , " << route[i].accel[0] << " , " << (-route[i].accel[2]) << " },\n";
-			outputfile << "  }\n";
+			outputfile << "  },\n";
 		}
 	}
 	outputfile << "};\n";
