@@ -24,6 +24,7 @@ struct InscribedCircle {
 	double begin_;
 	double end_;
 	double v_;
+	double first_angle_;
 };
 std::vector<InscribedCircle> viaCircle;
 void add_line_targets(std::vector<PointTargetData> &tgs, ishihalib::LineSeg lineseg, double ds, double v) {
@@ -141,7 +142,7 @@ void make_route() {
 }
 
 void route_visualize() {
-	std::ofstream outputfile("./src/calc_route/route.txt");
+	std::ofstream outputfile("./src/calc_route/src/product/route.txt");
 	size_t num = route.size();
 	size_t drawnum = 200;
 	for (size_t i = 0; i < num; i += ((num + drawnum - 1) / drawnum)) {
@@ -185,7 +186,7 @@ void route_ramp(double ds) {
 }
 
 void write_pyroute() {
-	std::ofstream outputfile("./src/calc_route/pyroute.py");
+	std::ofstream outputfile("./src/calc_route/src/product/movie/pyroute.py");
 	size_t num = route.size();
 	// size_t drawnum = 200;
 	double t = 0;
