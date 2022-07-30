@@ -54,14 +54,14 @@ void add_line_targets(std::vector<PointTargetData> &tgs, ishihalib::LineSeg line
 		if (t == 0.0) {
 			p.velocity[0] = ex * v;
 			p.velocity[1] = ey * v;
-			if (last_angle < -50)
+			if (last_angle > -50)
 				p.velocity[2] = ((last_angle - first_angle) / lineseg.length()) * v;
 			else
 				p.velocity[2] = 0;
 		} else {
 			p.velocity[0] = ex * MAX_VELOCITY;
 			p.velocity[1] = ey * MAX_VELOCITY;
-			if (last_angle < -50)
+			if (last_angle > -50)
 				p.velocity[2] = ((last_angle - first_angle) / lineseg.length()) * MAX_VELOCITY;
 			else
 				p.velocity[2] = 0;
@@ -90,7 +90,7 @@ void add_arc_targets(std::vector<PointTargetData> &tgs, ishihalib::Point center,
 		double velarg = (theta_e - theta_b > 0) ? theta + M_PI_2 : theta - M_PI_2;
 		p.velocity[0] = cos(velarg) * v;
 		p.velocity[1] = sin(velarg) * v;
-		if (along_turn_mode == 1 || along_turn_mode == 2)
+		if (r != 0 && (along_turn_mode == 1 || along_turn_mode == 2))
 			p.velocity[2] = v / r;
 		else
 			p.velocity[2] = 0;
@@ -252,8 +252,8 @@ void write_cpp_arrays() {
 	std::ofstream outputfile("./src/calc_route/src/product/array.cpp");
 	size_t num = route.size();
 	// size_t drawnum = 200;
-	outputfile << "#include <vector>\n#include <array>";
-	outputfile << "std::vector<std::array<std::array<double, 3>>> route = {n";
+	outputfile << "#include <vector>\n#include <array>\n";
+	outputfile << "std::vector<std::array<std::array<double, 3>>> route = {\n";
 	for (size_t i = 0; i < num; i++) {
 		double vv = route[i].velocity[0] * route[i].velocity[0] + route[i].velocity[1] * route[i].velocity[1];
 		if (vv >= 1e-12) {	//速度が小さすぎるものは無視

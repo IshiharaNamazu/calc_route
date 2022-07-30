@@ -3,9 +3,9 @@
 #include <complex>
 #include <vector>
 struct PointTargetData {
-	std::array<double, 3> pos;
-	std::array<double, 3> velocity;
-	std::array<double, 3> accel;
+	std::array<double, 3> pos = {0., 0., 0.};
+	std::array<double, 3> velocity = {0., 0., 0.};
+	std::array<double, 3> accel = {0., 0., 0.};
 	void set_polarvelocity(double v, double theta, double curvature = 0) {
 		velocity[0] = v * cos(theta);
 		velocity[1] = v * sin(theta);
