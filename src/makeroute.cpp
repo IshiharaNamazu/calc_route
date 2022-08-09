@@ -279,8 +279,8 @@ void write_cpp_vectors() {
 	for (size_t i = 0; i < num; i++) {
 		double vv = route[i].velocity[0] * route[i].velocity[0] + route[i].velocity[1] * route[i].velocity[1];
 		if (vv >= 1e-12) {	//速度が小さすぎるものは無視
-			outputfile << "  std::vector<double>{" << route[i].pos[1] << " , " << route[i].pos[0] << " , " << (M_PI_2 - route[i].pos[2]) << ", ";
-			outputfile << route[i].velocity[1] << " , " << route[i].velocity[0] << " , " << (-route[i].velocity[2]) << " },\n";
+			outputfile << "  {" << route[i].velocity[1] << " , " << route[i].velocity[0] << " , " << (-route[i].velocity[2]) << ", ";
+			outputfile << route[i].pos[1] << " , " << route[i].pos[0] << " , " << (M_PI_2 - route[i].pos[2]) << " },\n";
 		}
 	}
 	outputfile << "};\n";
