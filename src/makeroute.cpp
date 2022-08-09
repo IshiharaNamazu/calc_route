@@ -14,6 +14,7 @@
 std::vector<PointTargetData> route;
 void write_pyroute();
 void write_cpp_arrays();
+void write_cpp_vectors();
 void write_move_targets();
 
 void route_ramp(double ds);
@@ -179,6 +180,7 @@ void make_route() {
 	route_ramp(ds);
 	write_pyroute();
 	write_cpp_arrays();
+	write_cpp_vectors();
 	write_move_targets();
 	return;
 }
@@ -262,6 +264,23 @@ void write_cpp_arrays() {
 			outputfile << "    std::array<double, 3>{" << route[i].velocity[1] << " , " << route[i].velocity[0] << " , " << (-route[i].velocity[2]) << " },\n";
 			outputfile << "    std::array<double, 3>{" << route[i].accel[1] << " , " << route[i].accel[0] << " , " << (-route[i].accel[2]) << " },\n";
 			outputfile << "  },\n";
+		}
+	}
+	outputfile << "};\n";
+	outputfile.close();
+}
+void write_cpp_vectors() {
+	//製作時のガバによりxy軸が反転している
+	std::ofstream outputfile("./src/calc_route/src/product/vectors.cpp");
+	size_t num = route.size();
+	// size_t drawnum = 200;
+	outputfile << "#include <vector>\n";
+	outputfile << "std::vector<std::vector<double>> path = {\n";
+	for (size_t i = 0; i < num; i++) {
+		double vv = route[i].velocity[0] * route[i].velocity[0] + route[i].velocity[1] * route[i].velocity[1];
+		if (vv >= 1e-12) {	//速度が小さすぎるものは無視
+			outputfile << "  std::vector<double>{" << route[i].pos[1] << " , " << route[i].pos[0] << " , " << (M_PI_2 - route[i].pos[2]) << ", ";
+			outputfile << route[i].velocity[1] << " , " << route[i].velocity[0] << " , " << (-route[i].velocity[2]) << " },\n";
 		}
 	}
 	outputfile << "};\n";
