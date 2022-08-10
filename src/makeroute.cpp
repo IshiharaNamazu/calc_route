@@ -118,7 +118,7 @@ void connect_circle(InscribedCircle &c1, InscribedCircle &c2) {
 		c2.begin_ = ret;
 	}
 	if (c2.mode_ == 's' || c2.mode_ == 'z') {
-		theta1 = atan2((c1.r_ + c2.r_), L);
+		theta1 = asin((c1.r_ + c2.r_) / L);
 		if (c2.mode_ == 's') {
 			ret = theta0 + theta1;
 			c1.end_ = ret - M_PI_2;
@@ -178,6 +178,12 @@ void make_route() {
 	route[0].set_polarvelocity(0, route[0].get_velocity_arg());
 	route[route.size() - 1].set_polarvelocity(0, route[route.size() - 1].get_velocity_arg());
 	route_ramp(ds);
+
+	PointTargetData goal;
+	goal.pos = std::array<double, 3>{viaCircle[viaCircle.size() - 1].center_.x_, viaCircle[viaCircle.size() - 1].center_.y_, viaCircle[viaCircle.size() - 1].first_angle_};
+	goal.velocity = std::array<double, 3>{0, 0, 0};
+	goal.accel = std::array<double, 3>{0, 0, 0};
+	route.push_back(goal);
 	write_pyroute();
 	write_cpp_arrays();
 	write_cpp_vectors();
@@ -238,7 +244,7 @@ void write_pyroute() {
 	outputfile << "route = [\n";
 	for (size_t i = 0; i < num; i++) {
 		double vv = route[i].velocity[0] * route[i].velocity[0] + route[i].velocity[1] * route[i].velocity[1];
-		if (i != 0 && vv >= 1e-12) {  //速度が小さすぎるものは無視
+		if (i != 0 && (vv >= 1e-12)) {	//速度が小さすぎるものは無視
 			outputfile << "    [ " << t << " , " << route[i].pos[1] << " , " << route[i].pos[0] << " , " << (M_PI_2 - route[i].pos[2]) << " ],\n";
 			double dx = route[i].pos[1] - route[i - 1].pos[1];
 			double dy = route[i].pos[0] - route[i - 1].pos[0];
@@ -258,7 +264,7 @@ void write_cpp_arrays() {
 	outputfile << "std::vector<std::array<std::array<double, 3>>> route = {\n";
 	for (size_t i = 0; i < num; i++) {
 		double vv = route[i].velocity[0] * route[i].velocity[0] + route[i].velocity[1] * route[i].velocity[1];
-		if (vv >= 1e-12) {	//速度が小さすぎるものは無視
+		if (vv >= 1e-12 || true) {	//速度が小さすぎるものは無視
 			outputfile << "  std::array<std::array<double, 3>, 3>{\n";
 			outputfile << "    std::array<double, 3>{" << route[i].pos[1] << " , " << route[i].pos[0] << " , " << (M_PI_2 - route[i].pos[2]) << " },\n";
 			outputfile << "    std::array<double, 3>{" << route[i].velocity[1] << " , " << route[i].velocity[0] << " , " << (-route[i].velocity[2]) << " },\n";
@@ -278,7 +284,7 @@ void write_cpp_vectors() {
 	outputfile << "std::vector<std::vector<double>> path = {\n";
 	for (size_t i = 0; i < num; i++) {
 		double vv = route[i].velocity[0] * route[i].velocity[0] + route[i].velocity[1] * route[i].velocity[1];
-		if (vv >= 1e-12) {	//速度が小さすぎるものは無視
+		if (true || vv >= 1e-12) {	//速度が小さすぎるものは無視
 			outputfile << "  {" << route[i].velocity[1] << " , " << route[i].velocity[0] << " , " << (-route[i].velocity[2]) << ", ";
 			outputfile << route[i].pos[1] << " , " << route[i].pos[0] << " , " << (M_PI_2 - route[i].pos[2]) << " },\n";
 		}
