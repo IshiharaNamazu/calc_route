@@ -91,10 +91,14 @@ void add_arc_targets(std::vector<PointTargetData> &tgs, ishihalib::Point center,
 		double velarg = (theta_e - theta_b > 0) ? theta + M_PI_2 : theta - M_PI_2;
 		p.velocity[0] = cos(velarg) * v;
 		p.velocity[1] = sin(velarg) * v;
-		if (r != 0 && (along_turn_mode == 1 || along_turn_mode == 2))
-			p.velocity[2] = v / r;
-		else
+		if (r != 0 && (along_turn_mode == 1 || along_turn_mode == 2)) {
+			if (theta_e - theta_b > 0)
+				p.velocity[2] = v / r;
+			else
+				p.velocity[2] = -v / r;
+		} else {
 			p.velocity[2] = 0;
+		}
 		tgs.push_back(p);
 		t += dt;
 	}
