@@ -12,19 +12,19 @@ from launch_ros.actions import ComposableNodeContainer
 from launch_ros.actions import Node
 from launch_ros.descriptions import ComposableNode
 
-robot_ns = "R2"
-
 
 def generate_launch_description():
 
     route_calcrater = Node(
         package='calc_route',
+        namespace="",
         executable='calc_route'
     )
 
     visualizer = Node(
         package='rviz2',
         executable='rviz2',
+        namespace="",
         arguments=["-d", "src/calc_route/launch/rvizconfig.rviz"]
     )
 

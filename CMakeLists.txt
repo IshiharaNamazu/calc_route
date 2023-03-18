@@ -36,7 +36,13 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-install(TARGETS 
+install(
+  TARGETS 
   calc_route
   DESTINATION lib/${PROJECT_NAME})
+
+install(
+  DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME})
 ament_package()
